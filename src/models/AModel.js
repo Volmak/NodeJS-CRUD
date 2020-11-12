@@ -1,10 +1,8 @@
 
-class BaseModel {
-// too basic really to have multiple classes TODO: consider it anyway
-    constructor(TableName, schema){
-        this.DB = require('../db')[TableName];
-        this.SCHEMA = schema;
-    }
+/* ABSTRACT */
+class AModel {
+    
+    constructor(){}
 
     getById(id) {
         return this.DB.find((record) => {
@@ -77,4 +75,4 @@ class BaseModel {
     }
 }
 
-module.exports = BaseModel;
+module.exports = AModel;
