@@ -1,8 +1,10 @@
 
-/* ABSTRACT */
-class AModel {
+class BaseModel {
     
-    constructor(){}
+    constructor(TableName, schema){
+        this.DB = require('../db')[TableName];
+        this.SCHEMA = schema;
+    }
 
     getById(id) {
         return this.DB.find((record) => {
@@ -15,7 +17,7 @@ class AModel {
     }
 
     create(record) {
-        let bySchemaRecord = this._getBySchemaRecord(record);
+        let bySchemaRecord = this._getBySchemaRecord(record, true);
         bySchemaRecord.id = this._getNextId();
         this.DB.push(bySchemaRecord);
     }
@@ -28,7 +30,7 @@ class AModel {
         this.DB.splice(
             this._getArrayIndex(record.id),
             1,
-            this._getBySchemaRecord(record)
+            this._getBySchemaRecord(record, true)
         );
     }
 
@@ -52,11 +54,14 @@ class AModel {
         return this.DB.findIndex((record) => record.id == id);
     }
 
-    _getBySchemaRecord(record){
+    _getBySchemaRecord(record, checkMandatoryKays){
         let bySchemaRecord = {};
         for(let key in this.SCHEMA){
             if (key in record) {
                 bySchemaRecord[key] = this._getInBySchemaType(key, record[key])
+            } else if (checkMandatoryKays && this.SCHEMA[key].mandatory) {
+                /*TODO: Leave this to Express for now, but consider Exception handling */
+                throw 'Missing mandatory field';
             }
         }
         return bySchemaRecord;
@@ -70,9 +75,9 @@ class AModel {
             case "Float" : return parseFloat(value);
             case "String" : return String(value);
             case "Bool" : return Boolean(value);
+            case "Array" : return (value instanceof Array) ? value : [value];
         }
-        /* TODO: consider adding exceptions */
     }
 }
 
-module.exports = AModel;
+module.exports = BaseModel;

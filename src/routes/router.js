@@ -6,14 +6,24 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 /* TODO: modify the router to work with any controller */
+/* TODO: get rid of the binding. Controllers do not need to be classes. 
+Unite the router and the controllers and use CrudController as utility tool? */
 const ProductsController = require('../controllers/Products');
+const productsController = new ProductsController();
+router.get('/Products/', productsController.get.bind(productsController));
+router.get('/Products/:id', productsController.get.bind(productsController));
+router.post('/Products/', productsController.post.bind(productsController));
+router.delete('/Products/:id', productsController.delete.bind(productsController));
+router.put('/Products/', productsController.put.bind(productsController));
+router.patch('/Products/', productsController.patch.bind(productsController));
 
-router.get('/Products/', ProductsController.get);
-router.get('/Products/:id', ProductsController.get);
-router.post('/Products/', ProductsController.post);
-router.delete('/Products/:id', ProductsController.delete);
-router.put('/Products/', ProductsController.put);
-router.patch('/Products/', ProductsController.patch);
-
+const OrdersController = require('../controllers/Orders');
+const ordersController = new OrdersController();
+router.get('/Orders/', ordersController.get.bind(ordersController));
+router.get('/Orders/:id', ordersController.get.bind(ordersController));
+router.post('/Orders/', ordersController.post.bind(ordersController));
+router.delete('/Orders/:id', ordersController.delete.bind(ordersController));
+router.put('/Orders/', ordersController.put.bind(ordersController));
+router.patch('/Orders/', ordersController.patch.bind(ordersController));
 
 module.exports = router;

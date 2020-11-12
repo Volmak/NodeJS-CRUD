@@ -1,25 +1,28 @@
 
-const AModel = require('../models/AModel');
+const BaseModel = require('./BaseModel');
 
-class ProductsModel extends AModel {
+class ProductsModel extends BaseModel {
 
     constructor(){
-        super();
-        this.DB = require('../db')['Products'];
-        this.SCHEMA = {
+        const schema = {
             id: {
-                type: "Integer"
+                type: "Integer",
+                mandatory: true
             },
             name: {
-                type: "String"
+                type: "String",
+                mandatory: true
             },
             category: {
-                type: "String"
+                type: "String",
+                mandatory: true
             },
             price: {
-                type: "Float"
+                type: "Float",
+                mandatory: true
             }
         }
+        super('Products', schema);
     }
 }
 
