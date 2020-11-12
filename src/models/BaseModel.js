@@ -1,8 +1,9 @@
 
 class BaseModel {
 // too basic really to have multiple classes TODO: consider it anyway
-    constructor(TableName){
+    constructor(TableName, schema){
         this.DB = require('../db')[TableName];
+        this.SCHEMA = schema;
     }
 
     getById(id) {
@@ -16,8 +17,9 @@ class BaseModel {
     }
 
     create(record) {
-        record.id = this._getNextId();
-        this.DB.push(record);
+        let bySchemaRecord = this._getBySchemaRecord(record);
+        bySchemaRecord.id = this._getNextId();
+        this.DB.push(bySchemaRecord);
     }
 
     delete(id){
@@ -25,7 +27,16 @@ class BaseModel {
     }
 
     replace (record){
-        this.DB.splice(this._getArrayIndex(record.id), 1, record);
+        this.DB.splice(
+            this._getArrayIndex(record.id),
+            1,
+            this._getBySchemaRecord(record)
+        );
+    }
+
+    edit(newRecord) {
+        let savedRecord = this.getById(newRecord.id);
+        Object.assign(savedRecord, this._getBySchemaRecord(newRecord));
     }
 
     /*TODO: remove if database is added*/
@@ -41,6 +52,28 @@ class BaseModel {
 
     _getArrayIndex(id) {
         return this.DB.findIndex((record) => record.id == id);
+    }
+
+    _getBySchemaRecord(record){
+        let bySchemaRecord = {};
+        for(let key in this.SCHEMA){
+            if (key in record) {
+                bySchemaRecord[key] = this._getInBySchemaType(key, record[key])
+            }
+        }
+        return bySchemaRecord;
+    }
+
+    /*overlkill? TODO: consider removal*/
+    _getInBySchemaType(key, value){
+        const bySchemaType = this.SCHEMA[key].type;
+        switch(bySchemaType){
+            case "Integer" : return parseInt(value);
+            case "Float" : return parseFloat(value);
+            case "String" : return String(value);
+            case "Bool" : return Boolean(value);
+        }
+        /* TODO: consider adding exceptions */
     }
 }
 

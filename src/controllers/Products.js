@@ -1,6 +1,22 @@
 
 const BaseModel = require('../models/BaseModel');
-const ProductsModel = new BaseModel('Products');
+
+/* TODO:: Move to the model if more models are created */
+const ProductSchema = {
+    id: {
+        type: "Integer"
+    },
+    name: {
+        type: "String"
+    },
+    category: {
+        type: "String"
+    },
+    price: {
+        type: "Float"
+    }
+}
+const ProductsModel = new BaseModel('Products', ProductSchema);
 
 const controller = {
     
@@ -16,33 +32,23 @@ const controller = {
     },
 
     post: (req, res) => {
-        /* TODO:: Move to the model if more models are created */
-        ProductsModel.create({
-            name : req.body.name,
-            category : req.body.category,
-            price : req.body.price
-        });
-        res.send('Success!'); //no fails
+        ProductsModel.create(req.body);
+        res.send('Success! New Product was added.'); //no fails
     },
 
     delete: (req, res) => {
         ProductsModel.delete(req.params.id);
-        res.send('Success!'); //no fails
+        res.send('Success! The product was deleted.'); //no fails
     },
 
     put: (req, res) => {
-        /* TODO:: Move to the model if more models are created */
-        ProductsModel.replace({
-            id : req.body.id,
-            name : req.body.name,
-            category : req.body.category,
-            price : req.body.price
-        });
-        res.send('Success!'); //no fails
+        ProductsModel.replace(req.body);
+        res.send('Success! The product was replaced'); //no fails
     },
 
     patch: (req, res) => {
-
+        ProductsModel.edit(req.body);
+        res.send('Success! The product was modified'); //no fails
     }
 };
 
