@@ -26,4 +26,12 @@ router.delete('/Orders/:id', ordersController.delete.bind(ordersController));
 router.put('/Orders/', ordersController.put.bind(ordersController));
 router.patch('/Orders/', ordersController.patch.bind(ordersController));
 
+const OrderProductsController = require('../controllers/OrderProducts');
+const orderProductsController = new OrderProductsController();
+router.get('/Orders/:id/Products', orderProductsController.get.bind(orderProductsController));
+router.get('/Orders/:id/Products/:relId', orderProductsController.get.bind(orderProductsController));
+router.post('/Orders/:id/Products/', orderProductsController.post.bind(orderProductsController));
+router.post('/Orders/:id/Products/:relId', orderProductsController.post.bind(orderProductsController));
+router.delete('/Orders/:id/Products/:relId', orderProductsController.delete.bind(orderProductsController));
+
 module.exports = router;

@@ -20,6 +20,7 @@ class BaseModel {
         let bySchemaRecord = this._getBySchemaRecord(record, true);
         bySchemaRecord.id = this._getNextId();
         this.DB.push(bySchemaRecord);
+        return bySchemaRecord.id;
     }
 
     delete(id){
@@ -37,6 +38,12 @@ class BaseModel {
     edit(newRecord) {
         let savedRecord = this.getById(newRecord.id);
         Object.assign(savedRecord, this._getBySchemaRecord(newRecord));
+    }
+
+    filter(key, valueArray){
+        return this.DB.filter((record) => {
+            return valueArray.indexOf(record[key]) > -1;
+        })
     }
 
     /*TODO: remove if database is added*/

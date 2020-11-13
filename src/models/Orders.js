@@ -32,6 +32,16 @@ class OrdersModel extends BaseModel {
         super.create(timedRecord);
     }
 
+    addProduct(id, product) {
+        const order = this.getById(id);
+        order.products.push(product);
+    }
+
+    removeProduct(id, product) {
+        const order = this.getById(id);
+        order.products.splice(order.products.indexOf(product), 1);
+    }
+
     _getAsDateString(date){
         return date.toISOString().substring(0, 10);
     }
