@@ -29,17 +29,22 @@ class OrdersModel extends BaseModel {
     create(record) {
         let timedRecord = record;
         timedRecord.date = this._getAsDateString(new Date);
-        super.create(timedRecord);
+        return super.create(timedRecord);
     }
 
     addProduct(id, product) {
         const order = this.getById(id);
+        if (order.products.indexOf(product) > -1)
+            throw "Product exists";
         order.products.push(product);
     }
 
     removeProduct(id, product) {
         const order = this.getById(id);
-        order.products.splice(order.products.indexOf(product), 1);
+        const productIndex = order.products.indexOf(product);
+        if (productIndex < 0)
+            throw "Product does not exist";
+        order.products.splice(productIndex, 1);
     }
 
     _getAsDateString(date){

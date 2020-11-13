@@ -7,9 +7,13 @@ class BaseModel {
     }
 
     getById(id) {
-        return this.DB.find((record) => {
+        const foundRecord = this.DB.find((record) => {
             return record.id == id;
         })
+        if (!foundRecord){
+            throw 'Record does not exist';
+        }
+        return foundRecord;
     }
 
     all() {
@@ -24,12 +28,19 @@ class BaseModel {
     }
 
     delete(id){
-        this.DB.splice(this._getArrayIndex(id), 1);
+        let arrayIndex = this._getArrayIndex(id);
+        if (arrayIndex < 0)
+            throw 'Record does not exist';
+        this.DB.splice(arrayIndex, 1);
     }
 
     replace (record){
+        let arrayIndex = this._getArrayIndex(record.id);
+        if (arrayIndex < 0)
+            arrayIndex = this._getNextId();
+            
         this.DB.splice(
-            this._getArrayIndex(record.id),
+            arrayIndex,
             1,
             this._getBySchemaRecord(record, true)
         );

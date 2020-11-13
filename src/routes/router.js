@@ -2,36 +2,31 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const router = express.Router();
-
 router.use(bodyParser.json());
 
-/* TODO: modify the router to work with any controller */
-/* TODO: get rid of the binding. Controllers do not need to be classes. 
-Unite the router and the controllers and use CrudController as utility tool? */
-const ProductsController = require('../controllers/Products');
-const productsController = new ProductsController();
-router.get('/Products/', productsController.get.bind(productsController));
-router.get('/Products/:id', productsController.get.bind(productsController));
-router.post('/Products/', productsController.post.bind(productsController));
-router.delete('/Products/:id', productsController.delete.bind(productsController));
-router.put('/Products/', productsController.put.bind(productsController));
-router.patch('/Products/', productsController.patch.bind(productsController));
+const productsController = require('../controllers/Products');
+router.get('/Products/', productsController.getAll);
+router.get('/Products/:id', productsController.getById);
+router.post('/Products/', productsController.post);
+router.delete('/Products/:id', productsController.delete);
+router.put('/Products/', productsController.put);
+router.patch('/Products/', productsController.patch);
+router.patch('/Products/:id', productsController.patchById);
 
-const OrdersController = require('../controllers/Orders');
-const ordersController = new OrdersController();
-router.get('/Orders/', ordersController.get.bind(ordersController));
-router.get('/Orders/:id', ordersController.get.bind(ordersController));
-router.post('/Orders/', ordersController.post.bind(ordersController));
-router.delete('/Orders/:id', ordersController.delete.bind(ordersController));
-router.put('/Orders/', ordersController.put.bind(ordersController));
-router.patch('/Orders/', ordersController.patch.bind(ordersController));
+const ordersController = require('../controllers/Orders');
+router.get('/Orders/', ordersController.getAll);
+router.get('/Orders/:id', ordersController.getById);
+router.post('/Orders/', ordersController.post);
+router.delete('/Orders/:id', ordersController.delete);
+router.put('/Orders/', ordersController.put);
+router.patch('/Orders/', ordersController.patch);
+router.patch('/Orders/:id', ordersController.patchById);
 
-const OrderProductsController = require('../controllers/OrderProducts');
-const orderProductsController = new OrderProductsController();
-router.get('/Orders/:id/Products', orderProductsController.get.bind(orderProductsController));
-router.get('/Orders/:id/Products/:relId', orderProductsController.get.bind(orderProductsController));
-router.post('/Orders/:id/Products/', orderProductsController.post.bind(orderProductsController));
-router.post('/Orders/:id/Products/:relId', orderProductsController.post.bind(orderProductsController));
-router.delete('/Orders/:id/Products/:relId', orderProductsController.delete.bind(orderProductsController));
+const orderProductsController = require('../controllers/OrderProducts');
+router.get('/Orders/:ordId/Products', orderProductsController.getAll);
+router.get('/Orders/:ordId/Products/:prodId', orderProductsController.getById);
+router.post('/Orders/:ordId/Products/', orderProductsController.addNewProduct);
+router.post('/Orders/:ordId/Products/:prodId', orderProductsController.addExistingProduct);
+router.delete('/Orders/:ordId/Products/:prodId', orderProductsController.delete.bind(orderProductsController));
 
 module.exports = router;

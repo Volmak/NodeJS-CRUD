@@ -1,39 +1,51 @@
 
-const CrudController = require('./CrudController');
+const ProductsModel = require('../models/Products');
+const OrdersModel = require('../models/Orders');
+const PRODUCTS_MODEL = new ProductsModel();
+const ORDERS_MODEL = new OrdersModel();
 
-class OrdersController extends CrudController{
-    constructor(){
-        const Model = require('../models/Products');
-        super(new Model());
-        const OrdersModel = require('../models/Orders');
-        this._ordersModel = new OrdersModel();
-    }
+module.exports = {
 
-    get(req, res) {
-        const order = this._ordersModel.getById(req.params.id);
-        const relId = parseInt(req.params.relId);
-        const filter = isNaN(relId) ? order.products : [relId];
-        res.send(this.MODEL.filter('id', filter));
-    }
+    getAll(req, res) {
+        const order = ORDERS_MODEL.getById(req.params.ordId);
+        if (order && order.products){
+            res.send(PRODUCTS_MODEL.filter('id', order.products));
+        }
+    },
 
-    post(req, res) {
-        const relId = parseInt(req.params.relId);
-        const productId = relId ? relId : this.MODEL.create(req.body);
-        this._ordersModel.addProduct(req.params.id, productId)
-        res.send('Success! New record was added.'); //no fails
-    }
+    getById(req, res) {
+        const order = ORDERS_MODEL.getById(req.params.ordId);
+        const prodId = parseInt(req.params.prodId);
+
+        if (order.products.indexOf(prodId) > -1){
+            res.send(PRODUCTS_MODEL.getById(prodId))
+        } else {
+            res.send('The order does not contain this product')
+        };
+    },
+
+    addNewProduct(req, res) {
+        const productId = PRODUCTS_MODEL.create(req.body);
+        ORDERS_MODEL.addProduct(req.params.ordId, productId)
+        res.send('Success! New record was added.');
+    },
+
+    addExistingProduct(req, res) {
+        const productId = parseInt(req.params.prodId);
+        const product = PRODUCTS_MODEL.getById(productId)
+        if (product){
+            ORDERS_MODEL.addProduct(req.params.ordId, productId)
+            res.send('Success! New record was added.');
+        } else {
+            res.send('The product does not exist');
+        }
+    },
 
     delete(req, res) {
-        this._ordersModel.removeProduct(parseInt(req.params.id), parseInt(req.params.relId))
-        res.send('Success! The record was deleted.'); //no fails
-    }
-
-    put(req, res) {
-        res.send('not implemented');
-    }
-
-    patch (req, res) {
-        res.send('not implemented');
+        ORDERS_MODEL.removeProduct(
+            parseInt(req.params.ordId), 
+            parseInt(req.params.prodId)
+        )
+        res.send('Success! The record was deleted.');
     }
 }
-module.exports = OrdersController;
