@@ -1,40 +1,59 @@
 const Model = require('../models/Orders');
-MODEL = new Model();
+const MODEL = new Model();
+
+const ERROR_NotFound = 'The product does not exist';
+
+function _assertRecordExists(id, res) {
+    const record = MODEL.getById(id);
+    if (!record){
+        res.status(404);
+        throw ERROR_NotFound;
+    }
+}
 
 module.exports = {
 
     getAll(req, res) {
-        res.send(MODEL.all());
+        res.status(200).send(MODEL.all());
     },
 
-    getById(req, res) {
+    getById(req, res, next) {
         const id = req.params.id;
-        res.send(MODEL.getById(id));
+        const record = MODEL.getById(id);
+        if (record){
+            res.status(200).send(record);
+        } else {
+            res.status(404);
+            next(ERROR_NotFound);
+        }
     },
 
     post(req, res) {
         MODEL.create(req.body);
-        res.send('Success! New record was added.'); //no fails
+        res.status(201).send('Success! New order was added.');
     },
 
-    delete(req, res) {
+    delete(req, res, next) {
+        _assertRecordExists(req.params.id, res, next);
         MODEL.delete(req.params.id);
-        res.send('Success! The record was deleted.'); //no fails
+        res.status(204);
     },
 
     put(req, res) {
         MODEL.replace(req.body);
-        res.send('Success! The record was replaced'); //no fails
+        res.status(200).send('Success! The order was replaced');
     },
 
-    patch (req, res) {
+    patch (req, res, next) {
+        _assertRecordExists(req.body.id, res, next);
         MODEL.edit(req.body);
-        res.send('Success! The record was modified'); //no fails
+        res.status(200).send('Success! The order was modified');
     },
 
-    patchById(req, res) {
+    patchById(req, res, next) {
+        _assertRecordExists(req.params.id, res, next);
         req.body.id = req.params.id;
         MODEL.edit(req.body);
-        res.send('Success! The record was modified'); //no fails
+        res.status(200).send('Success! The order was modified');
     }
 };

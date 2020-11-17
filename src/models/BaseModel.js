@@ -7,13 +7,9 @@ class BaseModel {
     }
 
     getById(id) {
-        const foundRecord = this.DB.find((record) => {
+        return this.DB.find((record) => {
             return record.id == id;
         })
-        if (!foundRecord){
-            throw 'Record does not exist';
-        }
-        return foundRecord;
     }
 
     all() {
@@ -36,14 +32,15 @@ class BaseModel {
 
     replace (record){
         let arrayIndex = this._getArrayIndex(record.id);
-        if (arrayIndex < 0)
-            arrayIndex = this._getNextId();
-            
-        this.DB.splice(
-            arrayIndex,
-            1,
-            this._getBySchemaRecord(record, true)
-        );
+        if (arrayIndex < 0){
+            this.create(record);
+        } else {
+            this.DB.splice(
+                arrayIndex,
+                1,
+                this._getBySchemaRecord(record, true)
+            );
+        }
     }
 
     edit(newRecord) {
@@ -78,7 +75,6 @@ class BaseModel {
             if (key in record) {
                 bySchemaRecord[key] = this._getInBySchemaType(key, record[key])
             } else if (checkMandatoryKays && this.SCHEMA[key].mandatory) {
-                /*TODO: Leave this to Express for now, but consider Exception handling */
                 throw 'Missing mandatory field';
             }
         }

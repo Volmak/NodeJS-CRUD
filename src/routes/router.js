@@ -27,6 +27,6 @@ router.get('/Orders/:ordId/Products', orderProductsController.getAll);
 router.get('/Orders/:ordId/Products/:prodId', orderProductsController.getById);
 router.post('/Orders/:ordId/Products/', orderProductsController.addNewProduct);
 router.post('/Orders/:ordId/Products/:prodId', orderProductsController.addExistingProduct);
-router.delete('/Orders/:ordId/Products/:prodId', orderProductsController.delete.bind(orderProductsController));
+router.delete('/Orders/:ordId/Products/:prodId', orderProductsController.delete);
 
 module.exports = router;
