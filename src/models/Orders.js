@@ -63,7 +63,6 @@ class OrdersModel extends BaseModel {
             if (this.STATUS_ARRAY.indexOf(value) > -1){
                 return value;
             } else {
-                /*TODO: Leave this to Express for now, but consider Exception handling */
                 throw 'Invalid Status'; 
             }
         }

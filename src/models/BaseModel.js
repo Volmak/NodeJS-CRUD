@@ -81,7 +81,6 @@ class BaseModel {
         return bySchemaRecord;
     }
 
-    /*overlkill? TODO: consider removal*/
     _getInBySchemaType(key, value){
         const bySchemaType = this.SCHEMA[key].type;
         switch(bySchemaType){
