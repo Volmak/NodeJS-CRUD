@@ -17,14 +17,14 @@ module.exports = {
         res.status(200).send(MODEL.all());
     },
 
-    getById(req, res, next) {
+    getById(req, res) {
         const id = req.params.id;
         const record = MODEL.getById(id);
         if (record){
             res.status(200).send(record);
         } else {
             res.status(404);
-            next(ERROR_NotFound);
+            throw ERROR_NotFound;
         }
     },
 
@@ -33,8 +33,8 @@ module.exports = {
         res.status(201).send('Success! New order was added.');
     },
 
-    delete(req, res, next) {
-        _assertRecordExists(req.params.id, res, next);
+    delete(req, res) {
+        _assertRecordExists(req.params.id, res);
         MODEL.delete(req.params.id);
         res.status(204);
     },
@@ -44,14 +44,14 @@ module.exports = {
         res.status(200).send('Success! The order was replaced');
     },
 
-    patch (req, res, next) {
-        _assertRecordExists(req.body.id, res, next);
+    patch (req, res) {
+        _assertRecordExists(req.body.id, res);
         MODEL.edit(req.body);
         res.status(200).send('Success! The order was modified');
     },
 
-    patchById(req, res, next) {
-        _assertRecordExists(req.params.id, res, next);
+    patchById(req, res) {
+        _assertRecordExists(req.params.id, res);
         req.body.id = req.params.id;
         MODEL.edit(req.body);
         res.status(200).send('Success! The order was modified');
