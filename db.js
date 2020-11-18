@@ -29,5 +29,17 @@ module.exports = {
             "products": [1],
             "status": "Pending"
         }
+    ],
+
+    Users:
+    [
+        {
+            "username": "User",
+            "password": "User"
+        },
+        {
+            "username": "PowerUser",
+            "password": "PowerUser"
+        }
     ]
 }

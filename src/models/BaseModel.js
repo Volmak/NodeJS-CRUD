@@ -2,7 +2,7 @@
 class BaseModel {
     
     constructor(TableName, schema){
-        this.DB = require('../db')[TableName];
+        this.DB = require('../../db')[TableName];
         this.SCHEMA = schema;
     }
 
