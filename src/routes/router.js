@@ -10,6 +10,7 @@ const AuthMW = require('../Middlewares/Auth');
 
 const UserController = require('../controllers/User');
 router.post('/login', UserController.login);
+router.post('/register', UserController.register);
 
 const productsController = require('../controllers/Products');
 router.get('/Products/', productsController.getAll);

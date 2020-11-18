@@ -26,5 +26,19 @@ module.exports = {
             httpOnly: true
         });
         res.status(200).send('You are now logged in');
+    },
+
+    register (req, res){
+        /* TODO: Proper username/passwords? Seems useless and annoying for testing */
+        if (!req.body || !req.body.username || req.body.username.length < 6){
+            res.status(500);
+            throw "Username should be at least 6 characters";
+        }
+        if (!req.body || !req.body.password || req.body.password.length < 6){
+            res.status(500);
+            throw "Password should be at least 6 characters";
+        }
+        MODEL.create(req.body)
+        res.status(201).send('Success! You are now registered.');
     }
 }
