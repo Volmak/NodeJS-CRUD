@@ -50,17 +50,19 @@ function _assertRecordExists(id, res) {
 module.exports = {
 
     getAll(req, res) {
-        let result = MODEL.all();
+        const entityCollection = MODEL.all();
         const countryCode = requestCountry(req);
-        result.forEach((record) => {
-            _applyVat(record, countryCode);
+        const result = entityCollection.map((record) => {
+            let copiedRecord = Object.assign({}, record);  
+            _applyVat(copiedRecord, countryCode);
+            return copiedRecord;
         })
         res.status(200).send(result);
     },
 
     getById(req, res) {
         const id = req.params.id;
-        let record = MODEL.getById(id);
+        let record = Object.assign({}, MODEL.getById(id));
         if (record){
             const countryCode = requestCountry(req);
             _applyVat(record, countryCode);
