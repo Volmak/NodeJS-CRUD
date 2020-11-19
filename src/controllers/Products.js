@@ -1,6 +1,41 @@
 
+const requestCountry = require('request-country');
 const Model = require('../models/Products');
 const MODEL = new Model();
+
+const vatRatesUrl = 'https://euvatrates.com/rates.json';
+let vatRates;
+const https = require('https');
+
+https.get(vatRatesUrl,(res) => {
+    let body = "";
+
+    res.on("data", (chunk) => {
+        body += chunk;
+    });
+
+    res.on("end", () => {
+        try {
+            vatRates = JSON.parse(body);
+        } catch (error) {
+            console.error(error.message);
+        };
+    });
+
+}).on("error", (error) => {
+    console.error(error.message);
+});
+
+function _applyVat (product, countryCode){
+    if (vatRates && vatRates.rates && 
+        vatRates.rates[countryCode] && 
+        vatRates.rates[countryCode].standard_rate)
+    {
+        product.price *= (1 + vatRates.rates[countryCode].standard_rate/100)
+    } else {
+        product.withoutVat = true;
+    }
+}
 
 const ERROR_NotFound = 'The product does not exist';
 
@@ -15,13 +50,20 @@ function _assertRecordExists(id, res) {
 module.exports = {
 
     getAll(req, res) {
-        res.status(200).send(MODEL.all());
+        let result = MODEL.all();
+        const countryCode = requestCountry(req);
+        result.forEach((record) => {
+            _applyVat(record, countryCode);
+        })
+        res.status(200).send(result);
     },
 
     getById(req, res) {
         const id = req.params.id;
-        const record = MODEL.getById(id);
+        let record = MODEL.getById(id);
         if (record){
+            const countryCode = requestCountry(req);
+            _applyVat(record, countryCode);
             res.status(200).send(record);
         } else {
             res.status(404);
